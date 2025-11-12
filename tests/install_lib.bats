@@ -5,7 +5,7 @@ setup() {
 }
 
 @test "il::os::name honors override" {
-  IL_OS_OVERRIDE="darwin"
+  export IL_OS_OVERRIDE="darwin"
   run il::os::name
   [ "$status" -eq 0 ]
   [ "$output" = "darwin" ]
@@ -29,4 +29,16 @@ SH
   run type il::log::info
   [ "$status" -eq 0 ]
   [[ "$output" == *"il::log::info"* ]]
+}
+
+@test "il::run::step executes commands in plain mode" {
+  run bash -lc "IL_RUN_FORCE_PLAIN=1; source '$BATS_TEST_DIRNAME/../lib/install-lib.sh'; il::run::step 'echo hi' bash -c 'echo hi'"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"hi"* ]]
+}
+
+@test "il::run::step propagates failures" {
+  run bash -lc "IL_RUN_FORCE_PLAIN=1; source '$BATS_TEST_DIRNAME/../lib/install-lib.sh'; il::run::step 'fail' bash -c 'exit 7'"
+  [ "$status" -eq 7 ]
+  [[ "$output" == *"exit 7"* ]]
 }

@@ -3,7 +3,7 @@
 if [[ -n "${INSTALL_LIB_LOGGING_LOADED:-}" ]]; then
   return 0
 fi
-declare -g INSTALL_LIB_LOGGING_LOADED=1
+INSTALL_LIB_LOGGING_LOADED=1
 
 _il_detect_color_support() {
   if [[ -n "${IL_NO_COLOR:-}" ]]; then

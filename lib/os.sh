@@ -3,7 +3,7 @@
 if [[ -n "${INSTALL_LIB_OS_LOADED:-}" ]]; then
   return 0
 fi
-declare -g INSTALL_LIB_OS_LOADED=1
+INSTALL_LIB_OS_LOADED=1
 
 il::os::name() {
   if [[ -n "${IL_OS_OVERRIDE:-}" ]]; then

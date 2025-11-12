@@ -33,6 +33,7 @@ _install_lib_try_source "logging.sh"
 _install_lib_try_source "ui.sh"
 _install_lib_try_source "os.sh"
 _install_lib_try_source "packages.sh"
+_install_lib_try_source "run.sh"
 
 unset -f _install_lib_try_source
 

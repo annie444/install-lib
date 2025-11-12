@@ -2,7 +2,7 @@ set shell := ["bash", "-cu"]
 
 lint:
 	@command -v shellcheck >/dev/null 2>&1 || { echo 'shellcheck not installed'; exit 1; }
-	shellcheck lib/*.sh
+	shellcheck lib/*.sh install/*.sh
 
 test:
 	@command -v bats >/dev/null 2>&1 || { echo 'bats not installed'; exit 1; }
@@ -10,7 +10,7 @@ test:
 
 build:
   #!/usr/bin/env bash
-  set -euo pipefail
+  set -euxo pipefail
 
   ROOT="$(pwd)"
   DIST="$ROOT/dist/install-lib.sh"
@@ -21,6 +21,7 @@ build:
     lib/ui.sh
     lib/os.sh
     lib/packages.sh
+    lib/run.sh
   )
 
   mkdir -p "$(dirname "$DIST")"

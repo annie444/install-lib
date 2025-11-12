@@ -3,7 +3,7 @@
 if [[ -n "${INSTALL_LIB_PACKAGES_LOADED:-}" ]]; then
   return 0
 fi
-declare -g INSTALL_LIB_PACKAGES_LOADED=1
+INSTALL_LIB_PACKAGES_LOADED=1
 
 il::pkg::detect_manager() {
   if il::os::has_cmd brew; then
