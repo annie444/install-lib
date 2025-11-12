@@ -16,6 +16,7 @@ build:
   DIST="$ROOT/dist/install-lib.sh"
   DIST_MIN="$ROOT/dist/install-lib.min.sh"
   MODULES=(
+    lib/color.sh
     lib/install-lib.sh
     lib/logging.sh
     lib/ui.sh
@@ -35,7 +36,7 @@ build:
 
   for module in "${MODULES[@]}"; do
     {
-      echo
+      echo ""
       echo "# --- ${module} ---"
       /bin/cat "$ROOT/$module" | \
         grep -Ev '^\s*#\s*(shellcheck\s*shell=|!/usr/bin/env\s*bash|vim:\s*set\s*ft=bash:)' | \

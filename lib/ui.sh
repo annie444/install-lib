@@ -40,23 +40,23 @@ il::ui::has_tput() {
 }
 
 il::ui::cursor_hide() {
-  tput civis >/dev/null 2>&1 || true
+  tput civis || true
 }
 
 il::ui::cursor_show() {
-  tput cnorm >/dev/null 2>&1 || true
+  tput cnorm || true
 }
 
 il::ui::clear_line() {
-  tput el >/dev/null 2>&1 || printf '\r'
+  tput el || true
 }
 
 il::ui::cursor_save() {
-  tput sc >/dev/null 2>&1 || true
+  tput sc || true
 }
 
 il::ui::cursor_restore() {
-  tput rc >/dev/null 2>&1 || true
+  tput rc || true
 }
 
 # vim: set ft=bash:

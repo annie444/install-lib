@@ -29,6 +29,7 @@ _install_lib_try_source() {
   fi
 }
 
+_install_lib_try_source "color.sh"
 _install_lib_try_source "logging.sh"
 _install_lib_try_source "ui.sh"
 _install_lib_try_source "os.sh"

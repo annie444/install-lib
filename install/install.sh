@@ -13,7 +13,7 @@ mkdir -p "$TARGET"
 
 il::run::step "Build install-lib artifacts" bash -c "cd \"$ROOT\" && just build"
 
-SYNC_CMD=(rsync -a --delete --exclude '.git' --exclude '.github' --exclude '.serena' --exclude 'install' "$ROOT/" "$TARGET/")
+SYNC_CMD=(rsync -avP0 --delete --exclude '.git' --exclude '.github' --exclude '.serena' --exclude 'install' "$ROOT/" "$TARGET/")
 il::run::step "Sync install-lib to $TARGET" "${SYNC_CMD[@]}"
 
 touch "$TARGET/.installed"
