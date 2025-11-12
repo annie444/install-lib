@@ -20,7 +20,7 @@ setup() {
 exit 0
 SH
   chmod +x "$fake_bin/brew"
-  PATH="$fake_bin:$PATH" run bash -c 'source "$BATS_TEST_DIRNAME/../lib/install-lib.sh"; il::pkg::detect_manager'
+  PATH="$fake_bin:$PATH" run bash -c "source '$BATS_TEST_DIRNAME/../lib/install-lib.sh'; il::pkg::detect_manager"
   [ "$status" -eq 0 ]
   [ "$output" = "brew" ]
 }

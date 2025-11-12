@@ -3,7 +3,7 @@
 if [[ -n "${INSTALL_LIB_LOADED:-}" ]]; then
   return 0
 fi
-declare -g INSTALL_LIB_LOADED=1
+INSTALL_LIB_LOADED=1
 
 _install_lib_dirname() {
   local src="${BASH_SOURCE[0]}"
@@ -17,7 +17,6 @@ _install_lib_dirname() {
 }
 
 # Directory that contains this file (lib/) even when sourced via dist artifact.
-declare -g INSTALL_LIB_ROOT
 INSTALL_LIB_ROOT="${INSTALL_LIB_ROOT:-$(_install_lib_dirname)}"
 unset -f _install_lib_dirname
 
