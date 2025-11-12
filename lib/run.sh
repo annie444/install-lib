@@ -24,9 +24,27 @@ _il_run_use_tui() {
 _il_run_draw_block() {
   local icon="$1"
   local block_height="$2"
+  local is_final="${3:-0}"
   local log_capacity=$((block_height - 1))
   ((log_capacity < 1)) && log_capacity=1
   local total=${#_IL_RUN_LINES[@]}
+  local status_line="[no output yet]"
+  if ((total > 0)); then
+    status_line="${_IL_RUN_LINES[total - 1]}"
+  fi
+
+  local icon_color="$IL_COLOR_ACCENT"
+  if [[ "$icon" == "$IL_ICON_CHECK" ]]; then
+    icon_color="$IL_COLOR_SUCCESS"
+  elif [[ "$icon" == "$IL_ICON_CROSS" ]]; then
+    icon_color="$IL_COLOR_FAIL"
+  fi
+  local icon_display
+  icon_display="$(il::color::wrap "$icon_color" "$icon")"
+
+  il::ui::clear_line
+  printf '   %s %s
+' "$icon_display" "$(il::color::dim "$status_line")"
 
   local log_start=0
   if ((total > log_capacity)); then
@@ -38,11 +56,17 @@ _il_run_draw_block() {
     il::ui::clear_line
     local idx=$((log_start + i))
     if ((idx < total)); then
-      printf '   │ %s\n' "$(il::color::dim "${_IL_RUN_LINES[idx]}")"
+      printf '   │ %s
+' "$(il::color::dim "${_IL_RUN_LINES[idx]}")"
     else
-      printf '   │\n'
+      printf '   │
+'
     fi
   done
+
+  if [[ "$is_final" != "1" ]]; then
+    il::ui::cursor_up "$block_height"
+  fi
 }
 
 _il_run_with_tui() {
@@ -81,8 +105,7 @@ _il_run_with_tui() {
   for ((i = 0; i < block_lines; i++)); do
     printf '   │\n'
   done
-  tput cuu "$block_lines" || true
-  il::ui::cursor_save
+  il::ui::cursor_up "$block_lines"
 
   while true; do
     local had_line=0
@@ -94,8 +117,7 @@ _il_run_with_tui() {
         _IL_RUN_LINES=("${_IL_RUN_LINES[@]:1}")
       fi
     done
-    il::ui::cursor_restore
-    _il_run_draw_block "${frames[frame_idx]}" "$block_lines"
+    _il_run_draw_block "${frames[frame_idx]}" "$block_lines" 0
     frame_idx=$(((frame_idx + 1) % frame_count))
     if ! kill -0 "$cmd_pid" >/dev/null 2>&1 && [[ $had_line -eq 0 ]]; then
       break
@@ -108,8 +130,7 @@ _il_run_with_tui() {
     if ((${#_IL_RUN_LINES[@]} > log_capacity)); then
       _IL_RUN_LINES=("${_IL_RUN_LINES[@]:1}")
     fi
-    il::ui::cursor_restore
-    _il_run_draw_block "${frames[frame_idx]}" "$block_lines"
+    _il_run_draw_block "${frames[frame_idx]}" "$block_lines" 0
   done
 
   exec 3<&-
@@ -120,9 +141,7 @@ _il_run_with_tui() {
   if ((status == 0)); then
     icon="$IL_ICON_CHECK"
   fi
-  il::ui::cursor_restore
-  _il_run_draw_block "$icon" "$block_lines"
-  tput cud "$block_lines" || true
+  _il_run_draw_block "$icon" "$block_lines" 1
   trap - EXIT INT TERM
   il::ui::cursor_show
   rm -f "$fifo"

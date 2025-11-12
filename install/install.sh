@@ -8,6 +8,10 @@ source "$ROOT/lib/install-lib.sh"
 il::os::require_cmd rsync
 il::os::require_cmd just
 
+il::ui::choose "install_lib_prefix" "Install install-lib to:" \
+  "$HOME/.local/share/install-lib" "User local share (~/.local/share/install-lib)" \
+  "other" "Custom location"
+
 TARGET="${INSTALL_LIB_PREFIX:-$HOME/.local/share/install-lib}"
 mkdir -p "$TARGET"
 

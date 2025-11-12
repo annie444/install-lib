@@ -44,7 +44,7 @@ SH
 }
 
 @test "il::run::step TUI handles silent commands" {
-  run bash -lc "source '$BATS_TEST_DIRNAME/../lib/install-lib.sh'; il::ui::is_tty(){ return 0; }; il::ui::has_tput(){ return 0; }; tput(){ :; }; unset IL_RUN_FORCE_PLAIN; il::run::step 'make dir' bash -c 'mkdir -p "$BATS_TEST_TMPDIR/tui-silent"'"
+  run bash -lc "source '$BATS_TEST_DIRNAME/../lib/install-lib.sh'; il::ui::is_tty(){ return 0; }; il::ui::has_tput(){ return 0; }; tput(){ :; }; unset IL_RUN_FORCE_PLAIN; il::run::step 'make dir' bash -c 'mkdir -p \"$BATS_TEST_TMPDIR/tui-silent\"'"
   [ "$status" -eq 0 ]
   [[ "$output" == *"no output yet"* ]]
 }
