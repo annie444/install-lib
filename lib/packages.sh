@@ -8,8 +8,14 @@ declare -g INSTALL_LIB_PACKAGES_LOADED=1
 il::pkg::detect_manager() {
   if il::os::has_cmd brew; then
     printf 'brew\n'
-  elif il::os::has_cmd apt-get; then
+  elif il::os::has_cmd apt; then
     printf 'apt\n'
+  elif il::os::has_cmd apt-get; then
+    printf 'apt-get\n'
+  elif il::os::has_cmd dnf5; then
+    printf 'dnf5\n'
+  elif il::os::has_cmd dnf; then
+    printf 'dnf\n'
   elif il::os::has_cmd yum; then
     printf 'yum\n'
   else
@@ -31,7 +37,7 @@ il::pkg::ensure() {
         il::log::debug "$pkg already installed"
       fi
       ;;
-    apt)
+    apt-get | apt)
       if ! dpkg -s "$pkg" >/dev/null 2>&1; then
         il::log::info "Installing $pkg via apt"
         sudo apt-get update -y
@@ -40,10 +46,10 @@ il::pkg::ensure() {
         il::log::debug "$pkg already installed"
       fi
       ;;
-    yum)
+    yum | dnf | dnf5)
       if ! rpm -q "$pkg" >/dev/null 2>&1; then
         il::log::info "Installing $pkg via yum"
-        sudo yum install -y "$pkg"
+        sudo "$manager" install -y "$pkg"
       else
         il::log::debug "$pkg already installed"
       fi

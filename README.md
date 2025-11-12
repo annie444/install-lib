@@ -1,11 +1,12 @@
 # install-lib
 
-Reusable bash helpers for installer scripts. Source a single entrypoint in remote installers via `curl -fsSL ... | source` and get batteries-included utilities for logging, prompting, package detection, and more.
+Reusable bash helpers for installer scripts. Source a single entrypoint in remote installers via
+`curl -fsSL ... | source` and get batteries-included utilities for logging, prompting, package
+detection, and more.
 
 ## Repo layout
 
 - `lib/` – modular bash sources that define install-lib functions.
-- `scripts/build.sh` – concatenates modules into `dist/install-lib.sh` for remote sourcing.
 - `tests/` – Bats-based sanity checks.
 - `dist/` – generated artifacts (ignored from git).
 
@@ -13,14 +14,14 @@ Reusable bash helpers for installer scripts. Source a single entrypoint in remot
 
 ```bash
 # install deps (macOS)
-brew install shellcheck bats-core
+brew install shellcheck bats-core just
 
 # lint and test
-make lint
-make test
+just lint
+just test
 
 # rebuild distributable script
-./scripts/build.sh
+just build
 ```
 
 ## Usage sketch
@@ -31,7 +32,8 @@ il::log info "Ready to install"
 il::pkg ensure "brew" "git"
 ```
 
-The `dist/install-lib.sh` artifact will source-safe wrap every helper. You can also `source lib/install-lib.sh` locally during development.
+The `dist/install-lib.sh` artifact will source-safe wrap every helper. You can also `source 
+lib/install-lib.sh` locally during development.
 
 ## Roadmap ideas
 
