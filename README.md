@@ -1,6 +1,6 @@
 # install-lib
 
-[![CI](https://github.com/<you>/<repo>/actions/workflows/ci.yml/badge.svg)](https://github.com/<you>/<repo>/actions/workflows/ci.yml)
+[![CI](https://github.com/annie444/install-lib/actions/workflows/ci.yml/badge.svg)](https://github.com/annie444/install-lib/actions/workflows/ci.yml)
 
 Reusable bash helpers for installer scripts. Source a single entrypoint in remote installers via
 `curl -fsSL ... | source` and get batteries-included utilities for logging, prompting, package
@@ -34,7 +34,7 @@ and pull request (see `.github/workflows/ci.yml`).
 ## Usage sketch
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/<you>/<repo>/main/dist/install-lib.min.sh | source
+curl -fsSL https://raw.githubusercontent.com/annie444/install-lib/main/dist/install-lib.min.sh | source
 il::log info "Ready to install"
 il::pkg ensure "brew" "git"
 ```
