@@ -128,6 +128,26 @@ INSTALL_LIB_ICON_CHECK="✔"
 # shellcheck disable=SC2034
 INSTALL_LIB_ICON_CROSS="✖"
 
+@install.color::wrap() {
+  local code="$1"
+  shift
+  local string="$*"
+  if [[ -z "$code" ]]; then
+    printf '%s' "$*"
+  else
+    local beginning="$INSTALL_LIB_COLOR_RESET"
+    if [[ "$string" = *"$beginning"* ]]; then
+      beginning=""
+    fi
+    if [[ "${string: -2}" == '\n' ]]; then
+      string="${string%\\n}"
+      printf '%s%s%s%s\n' "$beginning" "$code" "$string" "$INSTALL_LIB_COLOR_RESET"
+      return
+    fi
+    printf '%s%s%s%s' "$beginning" "$code" "$string" "$INSTALL_LIB_COLOR_RESET"
+  fi
+}
+
 @install.color::bold() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BOLD" "$*"
 }
@@ -248,23 +268,6 @@ INSTALL_LIB_ICON_CROSS="✖"
 @install.color::bg::bright_white() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_BWHITE" "$*"
 }
-
-@install.color::wrap() {
-  local code="$1"
-  shift
-  local string="$*"
-  if [[ -z "$code" ]]; then
-    printf '%s' "$*"
-  else
-    if [[ "${string: -2}" == '\n' ]]; then
-      string="${string%\\n}"
-      printf '%s%s%s\n' "$code" "$string" "$INSTALL_LIB_COLOR_RESET"
-      return
-    fi
-    printf '%s%s%s' "$code" "$string" "$INSTALL_LIB_COLOR_RESET"
-  fi
-}
-
 @install.color::accent() {
   @install.color::wrap "$INSTALL_LIB_COLOR_ACCENT" "$*"
 }

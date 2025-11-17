@@ -5,6 +5,12 @@ if [[ -n "${INSTALL_LIB_LOGGING_LOADED:-}" ]]; then
 fi
 INSTALL_LIB_LOGGING_LOADED=1
 
+@install.log::cmd() {
+  local cmd=$1
+  shift || true
+  printf '%s %s' "$(@install.color::fg::cyan "$cmd")" "$(@install.color::fg::yellow "$*")"
+}
+
 @install.log() {
   local level="$1"
   shift

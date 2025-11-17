@@ -28,7 +28,7 @@ INSTALL_LIB_UI_LOADED=1
 
 @install.ui::prompt_enter() {
   local prompt="${1:-Press ENTER to continue...}"
-  read -r -p "$prompt"
+  read -r -n 1 -p "$prompt"
 }
 
 @install.ui::choose() {
@@ -64,6 +64,7 @@ INSTALL_LIB_UI_LOADED=1
   local i
   export selected=0
   export selected_value="${values[${options[$selected]}]}"
+
   _install_lib_increment() {
     selected=$((selected + 1))
     if ((selected >= num_options)); then
@@ -71,6 +72,7 @@ INSTALL_LIB_UI_LOADED=1
     fi
     export selected
   }
+
   _install_lib_decrement() {
     selected=$((selected - 1))
     if ((selected < 0)); then
@@ -80,10 +82,11 @@ INSTALL_LIB_UI_LOADED=1
   }
 
   _install_lib_print_options() {
+    @install.ui::cursor_hide
     shown="${printed:-0}"
     if ((shown != 0)); then
       @install.ui::cursor_up "$num_options"
-      @install.ui::clear_line
+      @install.ui::clear_lines
     fi
     for ((i = 0; i < num_options; i++)); do
       if ((i == selected)); then
@@ -94,6 +97,7 @@ INSTALL_LIB_UI_LOADED=1
       fi
     done
     export printed=1
+    @install.ui::cursor_show
   }
 
   local escape=$'\x1b'
@@ -112,14 +116,22 @@ INSTALL_LIB_UI_LOADED=1
     "$up" | "$k_key") _install_lib_decrement ;;
     "$down" | "$j_key") _install_lib_increment ;;
     "")
+      @install.ui::cursor_hide
       @install.ui::cursor_up "$num_options"
-      @install.ui::clear_line
+      @install.ui::clear_lines
       echo "You selected: ${options[selected]}"
       eval "export $var_name=\"$selected_value\""
+      @install.ui::cursor_show
       break
       ;;
     esac
   done
+  unset -v printed
+  unset -v selected
+  unset -v selected_value
+  export -n printed
+  export -n selected
+  export -n selected_value
 }
 
 @install.ui::section() {
@@ -148,6 +160,14 @@ INSTALL_LIB_UI_LOADED=1
   tput el || true
 }
 
+@install.ui::clear_screen() {
+  tput clear || true
+}
+
+@install.ui::clear_lines() {
+  tput ed || true
+}
+
 @install.ui::cursor_save() {
   tput sc || true
 }
@@ -157,7 +177,12 @@ INSTALL_LIB_UI_LOADED=1
 }
 
 @install.ui::cursor_up() {
-  local lines="$1"
+  local lines
+  if [[ -z "${1:-}" ]]; then
+    lines=1
+  else
+    lines="$1"
+  fi
   tput cuu "${lines:-1}" || true
 }
 

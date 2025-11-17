@@ -6,6 +6,8 @@ Reusable bash helpers for installer scripts. Source a single entrypoint in remot
 `curl -fsSL ... | source` and get batteries-included utilities for logging, prompting, package
 detection, and more.
 
+<script src="https://asciinema.org/a/756389.js" id="asciicast-756389" async="true"></script>
+
 ## Repo layout
 
 - `lib/` – modular bash sources that define install-lib functions.

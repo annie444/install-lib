@@ -43,8 +43,7 @@ _install_lib_run_draw_block() {
   icon_display="$(@install.color::wrap "$icon_color" "$icon")"
 
   @install.ui::clear_line
-  printf '   %s %s
-' "$icon_display" "$(@install.color::dim "$status_line")"
+  printf '   %s %s\n' "$icon_display" "$(@install.color::dim "$status_line")"
 
   local log_start=0
   if ((total > log_capacity)); then
@@ -56,11 +55,9 @@ _install_lib_run_draw_block() {
     @install.ui::clear_line
     local idx=$((log_start + i))
     if ((idx < total)); then
-      printf '   │ %s
-' "$(@install.color::dim "${INSTALL_LIB_RUN_LINES[idx]}")"
+      printf '   │ %s\n' "$(@install.color::dim "${INSTALL_LIB_RUN_LINES[idx]}")"
     else
-      printf '   │
-'
+      printf '   │\n'
     fi
   done
 

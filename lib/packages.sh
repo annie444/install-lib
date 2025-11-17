@@ -40,8 +40,13 @@ INSTALL_LIB_PACKAGES_LOADED=1
     apt-get | apt)
       if ! dpkg -s "$pkg" >/dev/null 2>&1; then
         @install.log::info "Installing $pkg via apt"
-        sudo apt-get update -y
-        sudo apt-get install -y "$pkg"
+        if ((UID != 0)) && ((EUID != 0)); then
+          sudo apt-get update -y
+          sudo apt-get install -y "$pkg"
+        else
+          apt-get update -y
+          apt-get install -y "$pkg"
+        fi
       else
         @install.log::debug "$pkg already installed"
       fi
@@ -49,7 +54,11 @@ INSTALL_LIB_PACKAGES_LOADED=1
     yum | dnf | dnf5)
       if ! rpm -q "$pkg" >/dev/null 2>&1; then
         @install.log::info "Installing $pkg via yum"
-        sudo "$manager" install -y "$pkg"
+        if ((UID != 0)) && ((EUID != 0)); then
+          sudo "$manager" install -y "$pkg"
+        else
+          "$manager" install -y "$pkg"
+        fi
       else
         @install.log::debug "$pkg already installed"
       fi
