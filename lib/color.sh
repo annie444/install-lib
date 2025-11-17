@@ -5,13 +5,16 @@ if [[ -n "${INSTALL_LIB_COLOR_LOADED:-}" ]]; then
 fi
 INSTALL_LIB_COLOR_LOADED=1
 
-_il_color_supports() {
-  if [[ -n "${IL_NO_COLOR:-}" ]]; then
+_install_lib_supports_color() {
+  if [[ -n "${INSTALL_LIB_FORCE_COLOR:-}" ]]; then
+    return 0
+  fi
+  if [[ -n "${INSTALL_LIB_NO_COLOR:-}" ]]; then
     return 1
   fi
   if [[ -t 1 || -t 2 ]]; then
     local colors
-    colors=$(tput colors || printf '0')
+    colors="$(tput colors || printf '0')"
     if ((colors > 0)); then
       return
     fi
@@ -20,73 +23,233 @@ _il_color_supports() {
 }
 
 # shellcheck disable=SC2034
-if _il_color_supports; then
-  IL_COLOR_RESET=$'\033[0m'
-  IL_COLOR_BOLD=$'\033[1m'
-  IL_COLOR_DIM=$'\033[2m'
-  IL_COLOR_ITALIC=$'\033[3m'
-  IL_COLOR_UNDERLINE=$'\033[4m'
-  IL_COLOR_BLINK=$'\033[5m'
-  IL_COLOR_REVERSE=$'\033[7m'
-  IL_COLOR_HIDDEN=$'\033[8m'
-  IL_COLOR_STRIKETHROUGH=$'\033[9m'
-  IL_COLOR_INFO=$'\033[32m'
-  IL_COLOR_WARN=$'\033[33m'
-  IL_COLOR_ERROR=$'\033[31m'
-  IL_COLOR_DEBUG=$'\033[36m'
-  IL_COLOR_ACCENT=$'\033[34m'
-  IL_COLOR_SUCCESS=$'\033[32m'
-  IL_COLOR_FAIL=$'\033[31m'
+if _install_lib_supports_color; then
+  INSTALL_LIB_COLOR_RESET=$'\033[0m'
+  INSTALL_LIB_COLOR_BOLD=$'\033[1m'
+  INSTALL_LIB_COLOR_DIM=$'\033[2m'
+  INSTALL_LIB_COLOR_ITALIC=$'\033[3m'
+  INSTALL_LIB_COLOR_UNDERLINE=$'\033[4m'
+  INSTALL_LIB_COLOR_BLINK=$'\033[5m'
+  INSTALL_LIB_COLOR_REVERSE=$'\033[7m'
+  INSTALL_LIB_COLOR_HIDDEN=$'\033[8m'
+  INSTALL_LIB_COLOR_STRIKETHROUGH=$'\033[9m'
+  INSTALL_LIB_COLOR_FG_BLACK=$'\033[30m'
+  INSTALL_LIB_COLOR_FG_RED=$'\033[31m'
+  INSTALL_LIB_COLOR_FG_GREEN=$'\033[32m'
+  INSTALL_LIB_COLOR_FG_YELLOW=$'\033[33m'
+  INSTALL_LIB_COLOR_FG_BLUE=$'\033[34m'
+  INSTALL_LIB_COLOR_FG_MAGENTA=$'\033[35m'
+  INSTALL_LIB_COLOR_FG_CYAN=$'\033[36m'
+  INSTALL_LIB_COLOR_FG_WHITE=$'\033[37m'
+  INSTALL_LIB_COLOR_FG_BBLACK=$'\033[90m'
+  INSTALL_LIB_COLOR_FG_BRED=$'\033[91m'
+  INSTALL_LIB_COLOR_FG_BGREEN=$'\033[92m'
+  INSTALL_LIB_COLOR_FG_BYELLOW=$'\033[93m'
+  INSTALL_LIB_COLOR_FG_BBLUE=$'\033[94m'
+  INSTALL_LIB_COLOR_FG_BMAGENTA=$'\033[95m'
+  INSTALL_LIB_COLOR_FG_BCYAN=$'\033[96m'
+  INSTALL_LIB_COLOR_FG_BWHITE=$'\033[97m'
+  INSTALL_LIB_COLOR_BG_BLACK=$'\033[40m'
+  INSTALL_LIB_COLOR_BG_RED=$'\033[41m'
+  INSTALL_LIB_COLOR_BG_GREEN=$'\033[42m'
+  INSTALL_LIB_COLOR_BG_YELLOW=$'\033[43m'
+  INSTALL_LIB_COLOR_BG_BLUE=$'\033[44m'
+  INSTALL_LIB_COLOR_BG_MAGENTA=$'\033[45m'
+  INSTALL_LIB_COLOR_BG_CYAN=$'\033[46m'
+  INSTALL_LIB_COLOR_BG_WHITE=$'\033[47m'
+  INSTALL_LIB_COLOR_BG_BBLACK=$'\033[100m'
+  INSTALL_LIB_COLOR_BG_BRED=$'\033[101m'
+  INSTALL_LIB_COLOR_BG_BGREEN=$'\033[102m'
+  INSTALL_LIB_COLOR_BG_BYELLOW=$'\033[103m'
+  INSTALL_LIB_COLOR_BG_BBLUE=$'\033[104m'
+  INSTALL_LIB_COLOR_BG_BMAGENTA=$'\033[105m'
+  INSTALL_LIB_COLOR_BG_BCYAN=$'\033[106m'
+  INSTALL_LIB_COLOR_BG_BWHITE=$'\033[107m'
+  INSTALL_LIB_COLOR_INFO="$INSTALL_LIB_COLOR_FG_GREEN"
+  INSTALL_LIB_COLOR_WARN="$INSTALL_LIB_COLOR_FG_YELLOW"
+  INSTALL_LIB_COLOR_ERROR="$INSTALL_LIB_COLOR_FG_RED"
+  INSTALL_LIB_COLOR_DEBUG="$INSTALL_LIB_COLOR_FG_CYAN"
+  INSTALL_LIB_COLOR_ACCENT="$INSTALL_LIB_COLOR_FG_BLUE"
+  INSTALL_LIB_COLOR_SUCCESS="$INSTALL_LIB_COLOR_FG_GREEN"
+  INSTALL_LIB_COLOR_FAIL="$INSTALL_LIB_COLOR_FG_RED"
 else
-  IL_COLOR_RESET=""
-  IL_COLOR_BOLD=""
-  IL_COLOR_DIM=""
-  IL_COLOR_ITALIC=""
-  IL_COLOR_UNDERLINE=""
-  IL_COLOR_BLINK=""
-  IL_COLOR_REVERSE=""
-  IL_COLOR_HIDDEN=""
-  IL_COLOR_STRIKETHROUGH=""
-  IL_COLOR_INFO=""
-  IL_COLOR_WARN=""
-  IL_COLOR_ERROR=""
-  IL_COLOR_DEBUG=""
-  IL_COLOR_ACCENT=""
-  IL_COLOR_SUCCESS=""
-  IL_COLOR_FAIL=""
+  INSTALL_LIB_COLOR_RESET=""
+  INSTALL_LIB_COLOR_BOLD=""
+  INSTALL_LIB_COLOR_DIM=""
+  INSTALL_LIB_COLOR_ITALIC=""
+  INSTALL_LIB_COLOR_UNDERLINE=""
+  INSTALL_LIB_COLOR_BLINK=""
+  INSTALL_LIB_COLOR_REVERSE=""
+  INSTALL_LIB_COLOR_HIDDEN=""
+  INSTALL_LIB_COLOR_STRIKETHROUGH=""
+  INSTALL_LIB_COLOR_FG_BLACK=""
+  INSTALL_LIB_COLOR_FG_RED=""
+  INSTALL_LIB_COLOR_FG_GREEN=""
+  INSTALL_LIB_COLOR_FG_YELLOW=""
+  INSTALL_LIB_COLOR_FG_BLUE=""
+  INSTALL_LIB_COLOR_FG_MAGENTA=""
+  INSTALL_LIB_COLOR_FG_CYAN=""
+  INSTALL_LIB_COLOR_FG_WHITE=""
+  INSTALL_LIB_COLOR_FG_BBLACK=""
+  INSTALL_LIB_COLOR_FG_BRED=""
+  INSTALL_LIB_COLOR_FG_BGREEN=""
+  INSTALL_LIB_COLOR_FG_BYELLOW=""
+  INSTALL_LIB_COLOR_FG_BBLUE=""
+  INSTALL_LIB_COLOR_FG_BMAGENTA=""
+  INSTALL_LIB_COLOR_FG_BCYAN=""
+  INSTALL_LIB_COLOR_FG_BWHITE=""
+  INSTALL_LIB_COLOR_BG_BLACK=""
+  INSTALL_LIB_COLOR_BG_RED=""
+  INSTALL_LIB_COLOR_BG_GREEN=""
+  INSTALL_LIB_COLOR_BG_YELLOW=""
+  INSTALL_LIB_COLOR_BG_BLUE=""
+  INSTALL_LIB_COLOR_BG_MAGENTA=""
+  INSTALL_LIB_COLOR_BG_CYAN=""
+  INSTALL_LIB_COLOR_BG_WHITE=""
+  INSTALL_LIB_COLOR_BG_BBLACK=""
+  INSTALL_LIB_COLOR_BG_BRED=""
+  INSTALL_LIB_COLOR_BG_BGREEN=""
+  INSTALL_LIB_COLOR_BG_BYELLOW=""
+  INSTALL_LIB_COLOR_BG_BBLUE=""
+  INSTALL_LIB_COLOR_BG_BMAGENTA=""
+  INSTALL_LIB_COLOR_BG_BCYAN=""
+  INSTALL_LIB_COLOR_BG_BWHITE=""
+  INSTALL_LIB_COLOR_INFO=""
+  INSTALL_LIB_COLOR_WARN=""
+  INSTALL_LIB_COLOR_ERROR=""
+  INSTALL_LIB_COLOR_DEBUG=""
+  INSTALL_LIB_COLOR_ACCENT=""
+  INSTALL_LIB_COLOR_SUCCESS=""
+  INSTALL_LIB_COLOR_FAIL=""
 fi
 
 # shellcheck disable=SC2034
-IL_ICON_CHECK="✔"
+INSTALL_LIB_ICON_CHECK="✔"
 # shellcheck disable=SC2034
-IL_ICON_CROSS="✖"
+INSTALL_LIB_ICON_CROSS="✖"
 
-il::color::bold() {
-  il::color::wrap "$IL_COLOR_BOLD" "$*"
+@install.color::bold() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BOLD" "$*"
 }
-il::color::dim() {
-  il::color::wrap "$IL_COLOR_DIM" "$*"
+@install.color::dim() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_DIM" "$*"
 }
-il::color::italic() {
-  il::color::wrap "$IL_COLOR_ITALIC" "$*"
+@install.color::italic() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_ITALIC" "$*"
 }
-il::color::underline() {
-  il::color::wrap "$IL_COLOR_UNDERLINE" "$*"
+@install.color::underline() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_UNDERLINE" "$*"
 }
-il::color::blink() {
-  il::color::wrap "$IL_COLOR_BLINK" "$*"
+@install.color::blink() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BLINK" "$*"
 }
-il::color::reverse() {
-  il::color::wrap "$IL_COLOR_REVERSE" "$*"
+@install.color::reverse() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_REVERSE" "$*"
 }
-il::color::hidden() {
-  il::color::wrap "$IL_COLOR_HIDDEN" "$*"
+@install.color::hidden() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_HIDDEN" "$*"
 }
-il::color::strikethrough() {
-  il::color::wrap "$IL_COLOR_STRIKETHROUGH" "$*"
+@install.color::strikethrough() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_STRIKETHROUGH" "$*"
+}
+@install.color::fg::black() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_BLACK" "$*"
+}
+@install.color::fg::red() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_RED" "$*"
+}
+@install.color::fg::green() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_GREEN" "$*"
+}
+@install.color::fg::yellow() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_YELLOW" "$*"
+}
+@install.color::fg::blue() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_BLUE" "$*"
+}
+@install.color::fg::magenta() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_MAGENTA" "$*"
+}
+@install.color::fg::cyan() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_CYAN" "$*"
+}
+@install.color::fg::white() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_WHITE" "$*"
+}
+@install.color::bg::black() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_BLACK" "$*"
+}
+@install.color::bg::red() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_RED" "$*"
+}
+@install.color::bg::green() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_GREEN" "$*"
+}
+@install.color::bg::yellow() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_YELLOW" "$*"
+}
+@install.color::bg::blue() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_BLUE" "$*"
+}
+@install.color::bg::magenta() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_MAGENTA" "$*"
+}
+@install.color::bg::cyan() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_CYAN" "$*"
+}
+@install.color::bg::white() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_WHITE" "$*"
+}
+@install.color::fg::bright_black() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_BBLACK" "$*"
+}
+@install.color::fg::bright_red() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_BRED" "$*"
+}
+@install.color::fg::bright_green() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_BGREEN" "$*"
+}
+@install.color::fg::bright_yellow() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_BYELLOW" "$*"
+}
+@install.color::fg::bright_blue() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_BBLUE" "$*"
+}
+@install.color::fg::bright_magenta() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_BMAGENTA" "$*"
+}
+@install.color::fg::bright_cyan() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_BCYAN" "$*"
+}
+@install.color::fg::bright_white() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_FG_BWHITE" "$*"
+}
+@install.color::bg::bright_black() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_BBLACK" "$*"
+}
+@install.color::bg::bright_red() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_BRED" "$*"
+}
+@install.color::bg::bright_green() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_BGREEN" "$*"
+}
+@install.color::bg::bright_yellow() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_BYELLOW" "$*"
+}
+@install.color::bg::bright_blue() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_BBLUE" "$*"
+}
+@install.color::bg::bright_magenta() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_BMAGENTA" "$*"
+}
+@install.color::bg::bright_cyan() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_BCYAN" "$*"
+}
+@install.color::bg::bright_white() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_BG_BWHITE" "$*"
 }
 
-il::color::wrap() {
+@install.color::wrap() {
   local code="$1"
   shift
   local string="$*"
@@ -95,20 +258,20 @@ il::color::wrap() {
   else
     if [[ "${string: -2}" == '\n' ]]; then
       string="${string%\\n}"
-      printf '%s%s%s\n' "$code" "$string" "$IL_COLOR_RESET"
+      printf '%s%s%s\n' "$code" "$string" "$INSTALL_LIB_COLOR_RESET"
       return
     fi
-    printf '%s%s%s' "$code" "$string" "$IL_COLOR_RESET"
+    printf '%s%s%s' "$code" "$string" "$INSTALL_LIB_COLOR_RESET"
   fi
 }
 
-il::color::accent() {
-  il::color::wrap "$IL_COLOR_ACCENT" "$*"
+@install.color::accent() {
+  @install.color::wrap "$INSTALL_LIB_COLOR_ACCENT" "$*"
 }
 
 # shellcheck disable=SC2034
-IL_ICON_SPINNER_ASCII=('-' $'\\' '|' '/')
+INSTALL_LIB_ICON_SPINNER_ASCII=('-' $'\\' '|' '/')
 # shellcheck disable=SC2034
-IL_ICON_SPINNER_BRAILLE=($'\u280b' $'\u2809' $'\u280a' $'\u280c' $'\u284c' $'\u284e' $'\u2846' $'\u2844')
+INSTALL_LIB_ICON_SPINNER_BRAILLE=($'\u280b' $'\u2809' $'\u280a' $'\u280c' $'\u284c' $'\u284e' $'\u2846' $'\u2844')
 
-unset -f _il_color_supports
+unset -f _install_lib_supports_color

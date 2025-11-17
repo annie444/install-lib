@@ -5,7 +5,7 @@ if [[ -n "${INSTALL_LIB_UI_LOADED:-}" ]]; then
 fi
 INSTALL_LIB_UI_LOADED=1
 
-il::ui::prompt_yes_no() {
+@install.ui::prompt_yes_no() {
   local prompt="$1"
   shift || true
   local default="${1:-y}"
@@ -26,25 +26,34 @@ il::ui::prompt_yes_no() {
   done
 }
 
-il::ui::prompt_enter() {
+@install.ui::prompt_enter() {
   local prompt="${1:-Press ENTER to continue...}"
   read -r -p "$prompt"
 }
 
-il::ui::choose() {
+@install.ui::choose() {
   local var_name="$1"
   shift || true
   local prompt="$1"
   shift || true
   local options=()
   declare -A values=()
-  while (("$#")); do
-    local opt="$2"
-    local val="$1"
-    options+=("$opt")
-    values["$opt"]="$val"
-    shift 2 || true
-  done
+  if (($# % 2 != 0)); then
+    while (("$#")); do
+      local opt="$1"
+      options+=("$opt")
+      values["$opt"]="$opt"
+      shift || true
+    done
+  else
+    while (("$#")); do
+      local opt="$2"
+      local val="$1"
+      options+=("$opt")
+      values["$opt"]="$val"
+      shift 2 || true
+    done
+  fi
   local num_options=${#options[@]}
   if ((num_options == 0)); then
     echo "No options provided to choose from." >&2
@@ -55,14 +64,14 @@ il::ui::choose() {
   local i
   export selected=0
   export selected_value="${values[${options[$selected]}]}"
-  increment() {
+  _install_lib_increment() {
     selected=$((selected + 1))
     if ((selected >= num_options)); then
       selected=0
     fi
     export selected
   }
-  decrement() {
+  _install_lib_decrement() {
     selected=$((selected - 1))
     if ((selected < 0)); then
       selected=$((num_options - 1))
@@ -70,16 +79,16 @@ il::ui::choose() {
     export selected
   }
 
-  print_options() {
+  _install_lib_print_options() {
     shown="${printed:-0}"
     if ((shown != 0)); then
-      il::ui::cursor_up "$num_options"
-      il::ui::clear_line
+      @install.ui::cursor_up "$num_options"
+      @install.ui::clear_line
     fi
     for ((i = 0; i < num_options; i++)); do
       if ((i == selected)); then
         export selected_value="${values[${options[$selected]}]}"
-        il::color::accent "  $IL_ICON_CHECK ${options[i]}\n"
+        @install.color::accent "  $INSTALL_LIB_ICON_CHECK ${options[i]}\n"
       else
         printf '    %s\n' "${options[i]}"
       fi
@@ -94,61 +103,60 @@ il::ui::choose() {
   local j_key='j'
 
   while true; do
-    print_options
+    _install_lib_print_options
     IFS= read -rsn 1 key
     if [[ "$key" == "$escape" ]]; then
       read -rsn2 -t 0.1 key
     fi
     case "$key" in
-    "$up" | "$k_key") decrement ;;
-    "$down" | "$j_key") increment ;;
+    "$up" | "$k_key") _install_lib_decrement ;;
+    "$down" | "$j_key") _install_lib_increment ;;
     "")
-      il::ui::cursor_up "$num_options"
-      il::ui::clear_line
+      @install.ui::cursor_up "$num_options"
+      @install.ui::clear_line
       echo "You selected: ${options[selected]}"
       eval "export $var_name=\"$selected_value\""
       break
       ;;
     esac
-    print_options
   done
 }
 
-il::ui::section() {
+@install.ui::section() {
   local title="$1"
   local separator_line="════════════════════"
   printf '\n%s %s %s\n' "$separator_line" "$title" "$separator_line"
 }
 
-il::ui::is_tty() {
+@install.ui::is_tty() {
   [[ -t 1 ]]
 }
 
-il::ui::has_tput() {
+@install.ui::has_tput() {
   command -v tput >/dev/null 2>&1
 }
 
-il::ui::cursor_hide() {
+@install.ui::cursor_hide() {
   tput civis || true
 }
 
-il::ui::cursor_show() {
+@install.ui::cursor_show() {
   tput cnorm || true
 }
 
-il::ui::clear_line() {
+@install.ui::clear_line() {
   tput el || true
 }
 
-il::ui::cursor_save() {
+@install.ui::cursor_save() {
   tput sc || true
 }
 
-il::ui::cursor_restore() {
+@install.ui::cursor_restore() {
   tput rc || true
 }
 
-il::ui::cursor_up() {
+@install.ui::cursor_up() {
   local lines="$1"
   tput cuu "${lines:-1}" || true
 }

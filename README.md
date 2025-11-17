@@ -36,18 +36,18 @@ and pull request (see `.github/workflows/ci.yml`).
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/annie444/install-lib/main/dist/install-lib.min.sh | source
-il::log info "Ready to install"
-il::pkg ensure "brew" "git"
+@install.log info "Ready to install"
+@install.pkg ensure "brew" "git"
 
 # show friendly progress for long-running commands
-il::run::step "Install dotfiles" bash -c 'make bootstrap'
-il::run::step "Sync plugins" bash -c 'nvim --headless +PackerSync +qa'
+@install.run::step "Install dotfiles" bash -c 'make bootstrap'
+@install.run::step "Sync plugins" bash -c 'nvim --headless +PackerSync +qa'
 ```
 
 The `dist/install-lib.sh` artifact is the readable version; `dist/install-lib.min.sh` strips
 comments/blank lines to reduce download size. Both source-safe wrap every helper. You can also
-`source lib/install-lib.sh` locally during development. `il::run::step` renders Docker-like step
-output on macOS/Linux terminals (with a graceful plain-text fallback—set `IL_RUN_FORCE_PLAIN=1`
+`source lib/install-lib.sh` locally during development. `@install.run::step` renders Docker-like step
+output on macOS/Linux terminals (with a graceful plain-text fallback—set `INSTALL_LIB_RUN_FORCE_PLAIN=1`
 to force the fallback in CI or when debugging).
 
 ## Local smoke test installer
@@ -59,7 +59,7 @@ INSTALL_LIB_PREFIX="$HOME/.cache/install-lib" ./install/install.sh
 ```
 
 The installer builds the dist artifacts, then copies the repo into
-`$INSTALL_LIB_PREFIX` (default `~/.local/share/install-lib`) using `il::run::step`, so you can see
+`$INSTALL_LIB_PREFIX` (default `~/.local/share/install-lib`) using `@install.run::step`, so you can see
 the progressive output UX immediately.
 
 ## Roadmap ideas

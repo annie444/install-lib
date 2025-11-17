@@ -5,9 +5,9 @@ if [[ -n "${INSTALL_LIB_OS_LOADED:-}" ]]; then
 fi
 INSTALL_LIB_OS_LOADED=1
 
-il::os::name() {
-  if [[ -n "${IL_OS_OVERRIDE:-}" ]]; then
-    printf '%s\n' "$IL_OS_OVERRIDE"
+@install.os::name() {
+  if [[ -n "${INSTALL_LIB_OS_OVERRIDE:-}" ]]; then
+    printf '%s\n' "$INSTALL_LIB_OS_OVERRIDE"
     return
   fi
   local uname_out
@@ -20,13 +20,13 @@ il::os::name() {
   esac
 }
 
-il::os::require_cmd() {
+@install.os::require_cmd() {
   local bin="$1"
   command -v "$bin" >/dev/null 2>&1 && return 0
-  il::die 127 "Missing required command: $bin"
+  @install.die 127 "Missing required command: $bin"
 }
 
-il::os::has_cmd() {
+@install.os::has_cmd() {
   command -v "$1" >/dev/null 2>&1
 }
 
