@@ -6,11 +6,12 @@ Reusable bash helpers for installer scripts. Source a single entrypoint in remot
 `curl -fsSL ... | source` and get batteries-included utilities for logging, prompting, package
 detection, and more.
 
-<script src="https://asciinema.org/a/756389.js" id="asciicast-756389" async="true"></script>
+[![asciicast](https://asciinema.org/a/756389.svg)](https://asciinema.org/a/756389)
 
 ## Repo layout
 
 - `lib/` – modular bash sources that define install-lib functions.
+- `docs/` – API documentation for each module.
 - `tests/` – Bats-based sanity checks.
 - `justfile` – automation entrypoint for lint/test/build.
 - `install/` – smoke-test installer that stages the library to `~/.local/share/install-lib`.
@@ -33,6 +34,10 @@ just build
 
 GitHub Actions runs the same `just lint`, `just test`, and `just build` pipeline for every push
 and pull request (see `.github/workflows/ci.yml`).
+
+## Documentation
+
+Documentation can be found under [docs/](./docs/index.md)
 
 ## Usage sketch
 

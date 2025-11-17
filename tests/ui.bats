@@ -11,14 +11,22 @@ stub_ui() {
 }
 
 @test "@install.ui::choose handles value/option pairs" {
-  run bash -lc "source '$BATS_TEST_DIRNAME/../lib/color.sh'; source '$BATS_TEST_DIRNAME/../lib/ui.sh'; $(declare -f stub_ui); stub_ui; @install.color::accent(){ printf '%s' \"\$*\"; }; @install.ui::choose CHOICE 'Pick one' valA OptionA valB OptionB <<< $'\n'; printf '%s' \"\$CHOICE\" >'$BATS_TEST_TMPDIR/choice'"
+  local bash_bin="${BASH_5:-/opt/homebrew/bin/bash}"
+  if [[ ! -x "$bash_bin" ]]; then
+    bash_bin="bash"
+  fi
+  run "$bash_bin" -lc "source '$BATS_TEST_DIRNAME/../lib/color.sh'; source '$BATS_TEST_DIRNAME/../lib/ui.sh'; $(declare -f stub_ui); stub_ui; @install.color::accent(){ printf '%s' \"\$*\"; }; @install.ui::choose CHOICE 'Pick one' valA OptionA valB OptionB <<< $'\n'; printf '%s' \"\$CHOICE\" >'$BATS_TEST_TMPDIR/choice'"
   [ "$status" -eq 0 ]
   choice=$(<"$BATS_TEST_TMPDIR/choice")
   [ "$choice" = "valA" ]
 }
 
 @test "@install.ui::choose handles option list when odd args passed" {
-  run bash -lc "source '$BATS_TEST_DIRNAME/../lib/color.sh'; source '$BATS_TEST_DIRNAME/../lib/ui.sh'; $(declare -f stub_ui); stub_ui; @install.color::accent(){ printf '%s' \"\$*\"; }; @install.ui::choose CHOICE 'Pick one' Option1 Option2 <<< $'\n'; printf '%s' \"\$CHOICE\" >'$BATS_TEST_TMPDIR/choice'"
+  local bash_bin="${BASH_5:-/opt/homebrew/bin/bash}"
+  if [[ ! -x "$bash_bin" ]]; then
+    bash_bin="bash"
+  fi
+  run "$bash_bin" -lc "source '$BATS_TEST_DIRNAME/../lib/color.sh'; source '$BATS_TEST_DIRNAME/../lib/ui.sh'; $(declare -f stub_ui); stub_ui; @install.color::accent(){ printf '%s' \"\$*\"; }; @install.ui::choose CHOICE 'Pick one' Option1 Option2 <<< $'\n'; printf '%s' \"\$CHOICE\" >'$BATS_TEST_TMPDIR/choice'"
   [ "$status" -eq 0 ]
   choice=$(<"$BATS_TEST_TMPDIR/choice")
   [ "$choice" = "Option1" ]

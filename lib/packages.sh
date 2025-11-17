@@ -1,10 +1,22 @@
 # shellcheck shell=bash
+# @name install-lib packages
+# @file install-lib packages
+# @brief Package manager detection and installation helpers.
 
 if [[ -n "${INSTALL_LIB_PACKAGES_LOADED:-}" ]]; then
   return 0
 fi
 INSTALL_LIB_PACKAGES_LOADED=1
 
+# @brief Detect available package manager (brew/apt/apt-get/dnf5/dnf/yum) or return unknown.
+# @description
+#   Checks PATH for well-known package managers in priority order.
+#
+# @stdout Manager name or "unknown".
+# @exitcode 0 when detection completes.
+#
+# @example
+#   mgr="$(@install.pkg::detect_manager)"
 @install.pkg::detect_manager() {
   if @install.os::has_cmd brew; then
     printf 'brew\n'
@@ -23,6 +35,15 @@ INSTALL_LIB_PACKAGES_LOADED=1
   fi
 }
 
+# @brief Install packages using detected manager; warn if manager is unknown.
+#
+# @arg $@ string Package names to ensure are installed.
+#
+# @stderr Progress or warnings.
+# @exitcode Pass-through of package manager; 0 on success else manager exit.
+#
+# @example
+#   @install.pkg::ensure git curl
 @install.pkg::ensure() {
   local manager
   manager="$(@install.pkg::detect_manager)"

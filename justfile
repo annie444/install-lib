@@ -1,5 +1,27 @@
 set shell := ["bash", "-cu"]
 
+install-deps:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  source "{{ justfile_directory() }}/lib/install-lib.sh"
+  @install.ui::section "Installing dependencies"
+  if ! @install.os::has_cmd shdoc; then
+    SHDOC_TMP="${TMPDIR:-/tmp}/install-lib-deps.XXXXXX"
+    WORKDIR="$(mktemp -u "$SHDOC_TMP")"
+    @install.run::step "Clone ShDoc" git clone --recursive https://github.com/reconquest/shdoc "$WORKDIR/shdoc"
+    cd "$WORKDIR/shdoc"
+    sudo true
+    @install.run::step "Install ShDoc" sudo make install
+    cd -
+  fi
+  if ! @install.os::has_cmd shellcheck; then
+    @install.run::step "Install ShellCheck" @install.pkg::ensure shellcheck
+  fi
+  if ! @install.os::has_cmd bats; then
+    @install.run::step "Install BATS" @install.pkg::ensure bats-core
+  fi
+  @install.ui::section "All dependencies installed"
+
 lint:
   @command -v shellcheck >/dev/null 2>&1 || { echo 'shellcheck not installed'; exit 1; }
   shellcheck lib/*.sh install/*.sh
@@ -7,6 +29,34 @@ lint:
 test:
   @command -v bats >/dev/null 2>&1 || { echo 'bats not installed'; exit 1; }
   bats tests
+
+docs:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  if ! command -v shdoc >/dev/null 2>&1; then
+    echo "shdoc not installed; try 'just install-deps'" >&2
+    exit 1
+  fi
+  mkdir -p docs
+  for file in lib/*.sh; do
+    if [[ "$file" == "lib/install-lib.sh" ]]; then
+      # skip install-lib.sh to avoid recursion in docs
+      continue
+    fi
+    base=$(basename "$file" .sh)
+    shdoc < "$file" > "docs/${base}.md"
+  done
+  {
+    echo "# install-lib API"
+    echo
+    echo "## Contents"
+    echo
+    # concatenate docs in predictable order (skip index to avoid recursion)
+    doc_files=$(ls docs/*.md | LC_COLLATE=C sort | grep -v 'docs/index.md')
+    for md in $doc_files; do
+      echo "- **[$(basename "$md" .md)](${md##docs/})** @install.$(basename "$md" .md)::..."
+    done
+  } > docs/index.md
 
 build:
   #!/usr/bin/env bash

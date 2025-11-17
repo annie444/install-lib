@@ -1,10 +1,21 @@
 # shellcheck shell=bash
+# @name install-lib color
+# @file install-lib color
+# @brief ANSI color helpers and icons for install-lib.
+# @description Color support detection and wrapping helpers for install-lib.
 
 if [[ -n "${INSTALL_LIB_COLOR_LOADED:-}" ]]; then
   return 0
 fi
 INSTALL_LIB_COLOR_LOADED=1
 
+# @internal
+# @brief Detect whether color output should be enabled.
+# @set INSTALL_LIB_FORCE_COLOR boolean Force color even when not a TTY.
+# @set INSTALL_LIB_NO_COLOR boolean Disable color entirely.
+# @exitcode 0 when color is allowed; 1 otherwise.
+# @example
+#   if _install_lib_supports_color; then echo "color"; fi
 _install_lib_supports_color() {
   if [[ -n "${INSTALL_LIB_FORCE_COLOR:-}" ]]; then
     return 0
@@ -128,6 +139,20 @@ INSTALL_LIB_ICON_CHECK="✔"
 # shellcheck disable=SC2034
 INSTALL_LIB_ICON_CROSS="✖"
 
+# @brief Apply ANSI code color to text, resetting safely if colors are enabled.
+# @description
+#    Adds reset code and preserves trailing newlines.
+#
+# @arg $1 string ANSI color code.
+#
+# @arg $@ string Text to wrap (variadic).
+#
+# @stdout Decorated text.
+# @stderr None.
+# @exitcode Always 0.
+#
+# @example
+#   @install.color::wrap "$INSTALL_LIB_COLOR_FG_GREEN" "ok"  # prints green ok
 @install.color::wrap() {
   local code="$1"
   shift
@@ -135,139 +160,377 @@ INSTALL_LIB_ICON_CROSS="✖"
   if [[ -z "$code" ]]; then
     printf '%s' "$*"
   else
-    local beginning="$INSTALL_LIB_COLOR_RESET"
-    if [[ "$string" = *"$beginning"* ]]; then
-      beginning=""
-    fi
     if [[ "${string: -2}" == '\n' ]]; then
       string="${string%\\n}"
-      printf '%s%s%s%s\n' "$beginning" "$code" "$string" "$INSTALL_LIB_COLOR_RESET"
+      printf '%s%s%s\n' "$code" "$string" "$INSTALL_LIB_COLOR_RESET"
       return
     fi
-    printf '%s%s%s%s' "$beginning" "$code" "$string" "$INSTALL_LIB_COLOR_RESET"
+    printf '%s%s%s' "$code" "$string" "$INSTALL_LIB_COLOR_RESET"
   fi
 }
 
+# @brief Bold text when color support is available.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bold "Title"
 @install.color::bold() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BOLD" "$*"
 }
+
+# @brief Dim text when color support is available.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::dim "Note"
 @install.color::dim() {
   @install.color::wrap "$INSTALL_LIB_COLOR_DIM" "$*"
 }
+
+# @brief Italicize text when color support is available.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::italic "Emphasis"
 @install.color::italic() {
   @install.color::wrap "$INSTALL_LIB_COLOR_ITALIC" "$*"
 }
+
+# @brief Underline text when color support is available.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::underline "Link"
 @install.color::underline() {
   @install.color::wrap "$INSTALL_LIB_COLOR_UNDERLINE" "$*"
 }
+
+# @brief Blink text when color support is available.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::blink "Alert"
 @install.color::blink() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BLINK" "$*"
 }
+
+# @brief Reverse-video text when color support is available.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::reverse "Invert"
 @install.color::reverse() {
   @install.color::wrap "$INSTALL_LIB_COLOR_REVERSE" "$*"
 }
+
+# @brief Hide text when color support is available.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::hidden "secret"
 @install.color::hidden() {
   @install.color::wrap "$INSTALL_LIB_COLOR_HIDDEN" "$*"
 }
+
+# @brief Strike through text when color support is available.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::strikethrough "old"
 @install.color::strikethrough() {
   @install.color::wrap "$INSTALL_LIB_COLOR_STRIKETHROUGH" "$*"
 }
+
+# @brief Black foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::black "text"
 @install.color::fg::black() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_BLACK" "$*"
 }
+
+# @brief Red foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::red "text"
 @install.color::fg::red() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_RED" "$*"
 }
+
+# @brief Green foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::green "text"
 @install.color::fg::green() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_GREEN" "$*"
 }
+
+# @brief Yellow foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::yellow "text"
 @install.color::fg::yellow() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_YELLOW" "$*"
 }
+
+# @brief Blue foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::blue "text"
 @install.color::fg::blue() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_BLUE" "$*"
 }
+
+# @brief Magenta foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::magenta "text"
 @install.color::fg::magenta() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_MAGENTA" "$*"
 }
+
+# @brief Cyan foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::cyan "text"
 @install.color::fg::cyan() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_CYAN" "$*"
 }
+
+# @brief White foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::white "text"
 @install.color::fg::white() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_WHITE" "$*"
 }
+
+# @brief Black background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::black "text"
 @install.color::bg::black() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_BLACK" "$*"
 }
+
+# @brief Red background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::red "text"
 @install.color::bg::red() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_RED" "$*"
 }
+
+# @brief Green background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::green "text"
 @install.color::bg::green() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_GREEN" "$*"
 }
+
+# @brief Yellow background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::yellow "text"
 @install.color::bg::yellow() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_YELLOW" "$*"
 }
+
+# @brief Blue background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::blue "text"
 @install.color::bg::blue() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_BLUE" "$*"
 }
+
+# @brief Magenta background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::magenta "text"
 @install.color::bg::magenta() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_MAGENTA" "$*"
 }
+
+# @brief Cyan background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::cyan "text"
 @install.color::bg::cyan() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_CYAN" "$*"
 }
+
+# @brief White background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::white "text"
 @install.color::bg::white() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_WHITE" "$*"
 }
+
+# @brief Bright black foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::bright_black "text"
 @install.color::fg::bright_black() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_BBLACK" "$*"
 }
+
+# @brief Bright red foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::bright_red "text"
 @install.color::fg::bright_red() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_BRED" "$*"
 }
+
+# @brief Bright green foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::bright_green "text"
 @install.color::fg::bright_green() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_BGREEN" "$*"
 }
+
+# @brief Bright yellow foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::bright_yellow "text"
 @install.color::fg::bright_yellow() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_BYELLOW" "$*"
 }
+
+# @brief Bright blue foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::bright_blue "text"
 @install.color::fg::bright_blue() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_BBLUE" "$*"
 }
+
+# @brief Bright magenta foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::bright_magenta "text"
 @install.color::fg::bright_magenta() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_BMAGENTA" "$*"
 }
+
+# @brief Bright cyan foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::bright_cyan "text"
 @install.color::fg::bright_cyan() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_BCYAN" "$*"
 }
+
+# @brief Bright white foreground wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::fg::bright_white "text"
 @install.color::fg::bright_white() {
   @install.color::wrap "$INSTALL_LIB_COLOR_FG_BWHITE" "$*"
 }
+
+# @brief Bright black background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::bright_black "text"
 @install.color::bg::bright_black() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_BBLACK" "$*"
 }
+
+# @brief Bright red background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::bright_red "text"
 @install.color::bg::bright_red() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_BRED" "$*"
 }
+
+# @brief Bright green background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::bright_green "text"
 @install.color::bg::bright_green() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_BGREEN" "$*"
 }
+
+# @brief Bright yellow background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::bright_yellow "text"
 @install.color::bg::bright_yellow() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_BYELLOW" "$*"
 }
+
+# @brief Bright blue background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::bright_blue "text"
 @install.color::bg::bright_blue() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_BBLUE" "$*"
 }
+
+# @brief Bright magenta background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::bright_magenta "text"
 @install.color::bg::bright_magenta() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_BMAGENTA" "$*"
 }
+# @brief Bright cyan background wrapper.
+# @see @install.color::wrap
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::bright_cyan "text"
 @install.color::bg::bright_cyan() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_BCYAN" "$*"
 }
+# @brief Bright white background wrapper.
+# @exitcode Always 0.
+# @example
+#   @install.color::bg::bright_white "example"
 @install.color::bg::bright_white() {
   @install.color::wrap "$INSTALL_LIB_COLOR_BG_BWHITE" "$*"
 }
+# @brief Use accent color wrapper (blue default).
+# @see @install.color::wrap
+# @stdout Decorated text.
+# @exitcode Always 0.
+# @example
+#   @install.color::accent "heading"
 @install.color::accent() {
   @install.color::wrap "$INSTALL_LIB_COLOR_ACCENT" "$*"
 }
